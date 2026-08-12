@@ -1,0 +1,5 @@
+<odoo>
+<menuitem id="estate_menu_root" name="Root"/>
+<menuitem id="second_level" name="Estate" />
+<menuitem name="Third" id="third_level"  action="estate_property_action"/>
+</odoo>
