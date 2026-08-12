@@ -6,3 +6,4 @@ class EstateProperty(models.Model):
     _description = "Real Estate Property"
 
     name = fields.Char(required=True)
+    price = fields.Float()

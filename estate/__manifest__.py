@@ -5,6 +5,13 @@
     'depends': ['base'],
     'author': 'Carlo',
     "license": "OPL-1",
-    "data": []
+    "data": [],
+        'demo': [
+        'demo/demo.xml',
+    ],
+    'data': [
+    'security/security.xml',
+    'security/ir.model.access.csv',
+],
   
 }
