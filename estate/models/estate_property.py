@@ -10,7 +10,7 @@ class EstateProperty(models.Model):
         return fields.Date.today() + relativedelta(months=3)
 
     name = fields.Char(required=True)
-    price = fields.Float()
+    expected_price = fields.Float()
     selling_price = fields.Float(readonly=True, copy=False)
     date_availability = fields.Date(copy=False, default=default_date)
     bedrooms = fields.Integer(default=2)
@@ -21,6 +21,7 @@ class EstateProperty(models.Model):
     garage = fields.Boolean()
     garden = fields.Boolean()
     garden_area = fields.Integer()
+    facades = fields.Integer()
     state = fields.Selection(
         selection=[
             ('new', 'New'),
