@@ -17,6 +17,10 @@ class EstateProperty(models.Model):
     active = fields.Boolean(default=True)
     postcode = fields.Char()
     living_area = fields.Integer()
+    description = fields.Text()
+    garage = fields.Boolean()
+    garden = fields.Boolean()
+    garden_area = fields.Integer()
     state = fields.Selection(
         selection=[
             ('new', 'New'),
