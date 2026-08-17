@@ -9,6 +9,10 @@ from dateutil.relativedelta import relativedelta
 class EstatePropertyOffer(models.Model):
     _name = "estate.property.offer"
     _description = "Real Estate Property Offer"
+    _sql_constraints = [
+            ('price_positive', 'CHECK(price > 0)', 'Il prezzo  deve essere strettamente positivo.'),
+           
+        ]
 
     price = fields.Float()
 

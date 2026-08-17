@@ -6,6 +6,10 @@ from odoo.exceptions import UserError
 class EstateProperty(models.Model):
     _name = "estate.property"
     _description = "Real Estate Property"
+    _sql_constraints = [
+        ('expected_price_positive', 'CHECK(expected_price > 0)', 'Il prezzo previsto deve essere strettamente positivo.'),
+        ('selling_price_positive', 'CHECK(selling_price >= 0)', 'Il prezzo di vendita deve essere positivo.'),
+    ]
 
     def _default_date(self):
         return fields.Date.today() + relativedelta(months=3)
