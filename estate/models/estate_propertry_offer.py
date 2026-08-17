@@ -1,4 +1,9 @@
-from odoo import models, fields
+from odoo import _, api, models, fields
+from odoo.exceptions import UserError
+from datetime import timedelta
+from dateutil.relativedelta import relativedelta
+
+
 
 
 class EstatePropertyOffer(models.Model):
@@ -6,6 +11,9 @@ class EstatePropertyOffer(models.Model):
     _description = "Real Estate Property Offer"
 
     price = fields.Float()
+
+    validity = fields.Integer(default=7)
+    date_deadline = fields.Date(compute="_compute_date_deadline", inverse="_inverse_date_deadline")
     status = fields.Selection(
         selection=[
             ('accepted', 'Accepted'),
@@ -15,3 +23,34 @@ class EstatePropertyOffer(models.Model):
     )
     partner_id = fields.Many2one("res.partner", required=True)
     property_id = fields.Many2one("estate.property", required=True)
+    property_type_id = fields.Many2one(
+        "estate.property.type",
+        string="Property Type",
+        related="property_id.property_type_id",
+        store=True,
+    )
+
+    @api.depends('validity',)
+    def _compute_date_deadline(self):
+        for record in self:
+            record.date_deadline = fields.Date.today() + relativedelta(days=record.validity)
+
+    def _inverse_date_deadline(self):
+        for record in self:
+           
+            record.validity = (record.date_deadline - fields.Date.today()).days
+
+    def action_accept(self):
+        for offer in self:
+            if offer.status == 'refused':
+                raise UserError(_("Un'offerta già rifiutata non può essere accettata."))
+            offer.status = 'accepted'
+            offer.property_id.selling_price = offer.price
+            offer.property_id.buyer_id = offer.partner_id
+            offer.property_id.state = 'offer_accepted'
+
+    def action_refuse(self):
+        for offer in self:
+            if offer.status == 'accepted':
+                raise UserError(_("Un'offerta già accettata non può essere rifiutata."))
+            offer.status = 'refused'
