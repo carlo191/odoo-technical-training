@@ -1,7 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- TIPI DI PROPRIETA' -->
+    <record id="estate_property_type_house" model="estate.property.type">
+        <field name="name">Casa</field>
+    </record>
+    <record id="estate_property_type_apartment" model="estate.property.type">
+        <field name="name">Appartamento</field>
+    </record>
+    <record id="estate_property_type_land" model="estate.property.type">
+        <field name="name">Terreno</field>
+    </record>
+
+    <!-- TAG -->
+    <record id="estate_property_tag_cozy" model="estate.property.tag">
+        <field name="name">Accogliente</field>
+    </record>
+    <record id="estate_property_tag_renovated" model="estate.property.tag">
+        <field name="name">Ristrutturato</field>
+    </record>
+    <record id="estate_property_tag_seaview" model="estate.property.tag">
+        <field name="name">Vista Mare</field>
+    </record>
+
+    <!-- PROPRIETA' -->
     <record id="estate_property_demo_1" model="estate.property">
         <field name="name">Bella Casa al Mare</field>
-        <field name="price">250000</field>
+        <field name="expected_price">250000</field>
+        <field name="property_type_id" ref="estate_property_type_house"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('estate_property_tag_cozy'), ref('estate_property_tag_seaview')])]"/>
+        <field name="bedrooms">3</field>
+        <field name="living_area">120</field>
+        <field name="postcode">10010</field>
+    </record>
+    <record id="estate_property_demo_2" model="estate.property">
+        <field name="name">Appartamento Centro</field>
+        <field name="expected_price">180000</field>
+        <field name="property_type_id" ref="estate_property_type_apartment"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('estate_property_tag_renovated')])]"/>
+        <field name="bedrooms">2</field>
+        <field name="living_area">80</field>
+        <field name="postcode">10011</field>
+    </record>
+    <record id="estate_property_demo_3" model="estate.property">
+        <field name="name">Villetta Collina</field>
+        <field name="expected_price">350000</field>
+        <field name="property_type_id" ref="estate_property_type_house"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('estate_property_tag_cozy')])]"/>
+        <field name="bedrooms">4</field>
+        <field name="living_area">200</field>
+        <field name="postcode">10012</field>
+    </record>
+
+    <!-- OFFERTE -->
+    <record id="estate_property_offer_demo_1" model="estate.property.offer">
+        <field name="partner_id" ref="base.res_partner_1"/>
+        <field name="property_id" ref="estate_property_demo_1"/>
+        <field name="price">240000</field>
+    </record>
+    <record id="estate_property_offer_demo_2" model="estate.property.offer">
+        <field name="partner_id" ref="base.res_partner_2"/>
+        <field name="property_id" ref="estate_property_demo_1"/>
+        <field name="price">260000</field>
+    </record>
+    <record id="estate_property_offer_demo_3" model="estate.property.offer">
+        <field name="partner_id" ref="base.res_partner_1"/>
+        <field name="property_id" ref="estate_property_demo_2"/>
+        <field name="price">170000</field>
     </record>
 </odoo>

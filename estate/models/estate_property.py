@@ -5,7 +5,8 @@ from odoo.exceptions import UserError
 
 class EstateProperty(models.Model):
     _name = "estate.property"
-    _description = "Real Estate Property"
+    _description = "Proprieta Immobiliare"
+    _order = "id desc"
     _sql_constraints = [
         ('expected_price_positive', 'CHECK(expected_price > 0)', 'Il prezzo previsto deve essere strettamente positivo.'),
         ('selling_price_positive', 'CHECK(selling_price >= 0)', 'Il prezzo di vendita deve essere positivo.'),
@@ -28,26 +29,26 @@ class EstateProperty(models.Model):
     garden_area = fields.Integer()
     garden_orientation = fields.Selection(
         selection=[
-            ('north', 'North'),
-            ('south', 'South'),
-            ('east', 'East'),
-            ('west', 'West'),
+            ('north', 'Nord'),
+            ('south', 'Sud'),
+            ('east', 'Est'),
+            ('west', 'Ovest'),
         ],
     )
     facades = fields.Integer()
     state = fields.Selection(
         selection=[
-            ('new', 'New'),
-            ('offer_received', 'Offer Received'),
-            ('offer_accepted', 'Offer Accepted'),
-            ('sold', 'Sold'),
-            ('canceled', 'Canceled'),
+            ('new', 'Nuova'),
+            ('offer_received', 'Offerta Ricevuta'),
+            ('offer_accepted', 'Offerta Accettata'),
+            ('sold', 'Venduta'),
+            ('canceled', 'Annullata'),
         ],
         required=True,
         copy=False,
         default='new',
     )
-    property_type_id = fields.Many2one("estate.property.type", string="Property Type")
+    property_type_id = fields.Many2one("estate.property.type", string="Tipo di Proprieta")
     offer_ids = fields.One2many("estate.property.offer", "property_id")
     tag_ids = fields.Many2many("estate.property.tag")
     total_area = fields.Integer(compute="_compute_total_area")
@@ -79,11 +80,11 @@ class EstateProperty(models.Model):
     def azione_venduta(self):
         for propriety in self:
             if propriety.state == "canceled":
-                raise UserError(_("Una proprietà cancellata non può essere venduta."))
+                raise UserError(_("Una proprieta annullata non puo essere venduta."))
             propriety.state = "sold"
 
     def azione_annullata(self):
         for proprieta in self:
             if proprieta.state == "sold":
-                raise UserError(_("Una proprietà venduta non può essere cancellata."))
+                raise UserError(_("Una proprieta venduta non puo essere annullata."))
             proprieta.state = "canceled"
