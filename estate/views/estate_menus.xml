@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="estate_property_type_action" model="ir.actions.act_window">
         <field name="name">Property Types</field>
@@ -9,6 +10,6 @@
         <menuitem id="estate_property_menu" name="Properties" action="estate_property_action"/>
         <menuitem id="estate_menu_configuration" name="Configuration">
             <menuitem id="estate_property_type_menu" name="Property Types" action="estate_property_type_action"/>
+            <menuitem id="estate_property_tag_menu" name="Property Tags" action="estate_property_tag_action"/>
         </menuitem>
     </menuitem>
-</odoo>
