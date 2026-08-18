@@ -13,9 +13,7 @@ class EstatePropertyOffer(models.Model):
     _sql_constraints = [
             ('price_positive', 'CHECK(price > 0)', 'Il prezzo deve essere strettamente positivo.'),
         ]
-    offer_count = fields.Integer(compute="_compute_offer_count")
     price = fields.Float()
-    offer_ids = fields.One2many("estate.property.offer", "property_type_id")
     validity = fields.Integer(default=7)
     date_deadline = fields.Date(compute="_compute_date_deadline", inverse="_inverse_date_deadline")
     status = fields.Selection(
@@ -67,11 +65,3 @@ class EstatePropertyOffer(models.Model):
             if offer.status == 'accepted':
                 raise UserError(_("Un'offerta gia accettata non puo essere rifiutata."))
             offer.status = 'refused'
-
-
-         
-
-@api.depends('offer_ids')
-def _compute_offer_count(self):
-    for record in self:
-        record.offer_count = len(record.offer_ids)
