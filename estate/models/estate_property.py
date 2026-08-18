@@ -8,10 +8,15 @@ class EstateProperty(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = "Proprieta Immobiliare"
     _order = "id desc"
-    _sql_constraints = [
-        ('expected_price_positive', 'CHECK(expected_price > 0)', 'Il prezzo previsto deve essere strettamente positivo.'),
-        ('selling_price_positive', 'CHECK(selling_price >= 0)', 'Il prezzo di vendita deve essere positivo.'),
-    ]
+
+    _expected_price_positive = models.Constraint(
+        'CHECK(expected_price > 0)',
+        'Il prezzo previsto deve essere strettamente positivo.',
+    )
+    _selling_price_positive = models.Constraint(
+        'CHECK(selling_price >= 0)',
+        'Il prezzo di vendita deve essere positivo.',
+    )
 
     def _default_date(self):
         return fields.Date.today() + relativedelta(months=3)
@@ -85,10 +90,16 @@ class EstateProperty(models.Model):
             propriety.state = "sold"
 
     def azione_annullata(self):
-        for proprieta in self:
-            if proprieta.state == "sold":
+        for propriety in self:
+            if propriety.state == "sold":
                 raise UserError(_("Una proprieta venduta non puo essere annullata."))
-            proprieta.state = "canceled"
+            propriety.state = "canceled"
+
+    def elimina_proprieta(self):
+        for propriety in self:
+            propriety.unlink()
+
+
 
     @api.ondelete(at_uninstall=False)
     def _check_delete_state(self):

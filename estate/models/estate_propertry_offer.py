@@ -10,9 +10,11 @@ class EstatePropertyOffer(models.Model):
     _name = "estate.property.offer"
     _description = "Offerta Proprieta Immobiliare"
     _order = "price desc"
-    _sql_constraints = [
-            ('price_positive', 'CHECK(price > 0)', 'Il prezzo deve essere strettamente positivo.'),
-        ]
+
+    _price_positive = models.Constraint(
+        'CHECK(price > 0)',
+        'Il prezzo deve essere strettamente positivo.',
+    )
     price = fields.Float()
     validity = fields.Integer(default=7)
     date_deadline = fields.Date(compute="_compute_date_deadline", inverse="_inverse_date_deadline")

@@ -7,5 +7,5 @@ class ResUsers(models.Model):
     property_ids = fields.One2many(
         'estate.property',
         'salesperson_id',
-        string='Properties'
+        string='Estate Properties'
     )
