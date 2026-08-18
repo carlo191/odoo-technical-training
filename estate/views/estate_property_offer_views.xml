@@ -6,6 +6,7 @@
         <field name="arch" type="xml">
             <list>
                 <field name="property_id" string="Proprieta"/>
+                <field name="property_type_id"/>
                 <field name="partner_id" string="Compratore"/>
                 <field name="price" string="Prezzo"/>
                 <button name="action_accept" type="object" string="Accetta" icon="fa-check" invisible="status in ('accepted', 'refused')"/>

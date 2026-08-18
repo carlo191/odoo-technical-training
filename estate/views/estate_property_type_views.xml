@@ -7,6 +7,14 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object"
+                                name="action_open_offer_ids"
+                                class="oe_stat_button"
+                                icon="fa-money">
+                            <field name="offer_count" string="Offerte"/>
+                        </button>
+                    </div>
                     <h1>
                         <field name="name" placeholder="Tipo di Proprieta"/>
                     </h1>
