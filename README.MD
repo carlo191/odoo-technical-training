@@ -108,7 +108,124 @@ class ResUsers(models.Model):
 
 ---
 
-## 🎨 Viste Implementate
+## 🔐 Sistema di Sicurezza e Permessi
+
+### Struttura dei Permessi
+
+Il modulo utilizza un **sistema di controllo accesso granulare** tramite il file `security/ir.model.access.csv`.
+
+**Utenti normali** (`base.group_user`):
+- ✅ **Leggere** proprietà (`perm_read=1`)
+- ❌ **Creare** proprietà (`perm_create=0`)
+- ❌ **Modificare** proprietà (`perm_write=0`)
+- ❌ **Eliminare** proprietà (`perm_unlink=0`)
+
+**Amministratori** (`estate.estate_admin`):
+- ✅ **Leggere** proprietà (`perm_read=1`)
+- ✅ **Creare** proprietà (`perm_create=1`)
+- ✅ **Modificare** proprietà (`perm_write=1`)
+- ✅ **Eliminare** proprietà (`perm_unlink=1`)
+
+### File `security/ir.model.access.csv`
+
+```csv
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_estate_property_user,estate.property.user,model_estate_property,base.group_user,1,0,0,0
+access_estate_property_admin,estate.property.admin,model_estate_property,estate.estate_admin,1,1,1,1
+access_estate_property_type_admin,estate.property.type.admin,model_estate_property_type,estate.estate_admin,1,1,1,1
+access_estate_property_offer_admin,estate.property.offer.admin,model_estate_property_offer,estate.estate_admin,1,1,1,1
+access_estate_property_tag_admin,estate.property.tag.admin,model_estate_property_tag,estate.estate_admin,1,1,1,1
+```
+
+**Colonne significative:**
+- `perm_read=1` → Permesso di lettura
+- `perm_write=1` → Permesso di modifica
+- `perm_create=1` → Permesso di creazione
+- `perm_unlink=1` → Permesso di eliminazione
+
+### Come Modificare i Permessi
+
+Se vuoi che gli **utenti normali possono creare proprietà**, modifica il file `security/ir.model.access.csv`:
+
+**Riga attuale:**
+```csv
+access_estate_property_user,estate.property.user,model_estate_property,base.group_user,1,0,0,0
+```
+
+**Riga modificata** (per permettere creazione):
+```csv
+access_estate_property_user,estate.property.user,model_estate_property,base.group_user,1,1,1,0
+```
+
+Significato:
+- `perm_read=1` → Può leggere ✅
+- `perm_write=1` → Può modificare ✅ (nuovo)
+- `perm_create=1` → Può creare ✅ (nuovo)
+- `perm_unlink=0` → Non può eliminare ❌
+
+Poi **ricarica il database**:
+```bash
+python3 odoo-bin --addons-path=addons,../technical-training -d estate_db -u estate --dev xml
+```
+
+### Attributi nelle Viste
+
+Alcuni campi hanno l'attributo `readonly` per aumentare la sicurezza:
+
+```xml
+<field name="selling_price" readonly="True"/>  <!-- Solo admin può modificare -->
+<field name="state" widget="statusbar"/>        <!-- Visibile a tutti -->
+```
+
+### Aggiungere un Nuovo Gruppo Personalizzato
+
+Per creare un gruppo con permessi specifici, modifica `security/security.xml`:
+
+```xml
+<record id="module_estate_group_salesperson" model="res.groups">
+    <field name="name">Estate / Agente Commerciale</field>
+    <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+</record>
+```
+
+Poi aggiungi una riga in `ir.model.access.csv`:
+
+```csv
+access_estate_property_salesperson,estate.property.salesperson,model_estate_property,module_estate_group_salesperson,1,1,1,0
+```
+
+---
+
+## 🎯 Caricamento Dati Demo
+
+Il file `demo/demo.xml` contiene **dati di esempio**:
+- 3 proprietà (Casa, Appartamento, Villetta)
+- 3 tipi di proprietà (Casa, Appartamento, Terreno)
+- 3 tag (Accogliente, Ristrutturato, Vista Mare)
+- 3 offerte
+
+### Opzione 1: Ricaricare Database con Demo
+
+```bash
+# Ferma Odoo (CTRL+C), poi:
+python3 odoo-bin --addons-path=addons,../technical-training \
+                  -d estate_demo \
+                  --demo=all \
+                  -i estate \
+                  --dev xml \
+                  --stop-after-init
+
+# Riavvia:
+python3 odoo-bin --addons-path=addons,../technical-training -d estate_demo --dev xml
+```
+
+### Opzione 2: Caricare da UI (se disponibile)
+
+Impostazioni → Moduli → Moduli Installati → Real Estate → Carica dati di demo
+
+---
+
+
 
 ### 1. **Vista Search** — Ricerca e filtraggio
 - Campi ricercabili: Titolo, Tipo, CAP, Prezzo, Camere, Superficie
