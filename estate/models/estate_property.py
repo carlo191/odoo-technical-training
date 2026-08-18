@@ -5,6 +5,7 @@ from odoo.exceptions import UserError
 
 class EstateProperty(models.Model):
     _name = "estate.property"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = "Proprieta Immobiliare"
     _order = "id desc"
     _sql_constraints = [
@@ -49,6 +50,7 @@ class EstateProperty(models.Model):
         default='new',
     )
     property_type_id = fields.Many2one("estate.property.type", string="Tipo di Proprieta")
+    salesperson_id = fields.Many2one("res.users", string="Commerciale")
     offer_ids = fields.One2many("estate.property.offer", "property_id")
     tag_ids = fields.Many2many("estate.property.tag")
     total_area = fields.Integer(compute="_compute_total_area")
@@ -88,3 +90,9 @@ class EstateProperty(models.Model):
             if proprieta.state == "sold":
                 raise UserError(_("Una proprieta venduta non puo essere annullata."))
             proprieta.state = "canceled"
+
+    @api.ondelete(at_uninstall=False)
+    def _check_delete_state(self):
+        for record in self:
+            if record.state not in ('new', 'canceled'):
+                raise UserError(_("Non puoi eliminare una proprieta che non sia in stato 'New' o 'Canceled'."))
